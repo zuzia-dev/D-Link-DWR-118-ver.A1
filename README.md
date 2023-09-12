@@ -32,3 +32,4 @@ Connect to the router with the network cable. Remove the power cable from the ro
 
 ### License
 OpenWrt is licensed under GPL-2.0
+- ###### Souce: https://github.com/zuzia-dev/D-Link-DWR-118-ver.A1/tree/main/Source/v1
