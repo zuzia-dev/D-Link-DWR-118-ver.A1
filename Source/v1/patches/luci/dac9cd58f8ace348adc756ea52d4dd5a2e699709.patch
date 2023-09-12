@@ -1,0 +1,28 @@
+From dac9cd58f8ace348adc756ea52d4dd5a2e699709 Mon Sep 17 00:00:00 2001
+From: egc112 <63402314+egc112@users.noreply.github.com>
+Date: Sat, 13 May 2023 11:08:09 +0200
+Subject: [PATCH] Update openvpn-advanced.lua
+
+Add data-ciphers.
+
+
+Signed-off-by: egc112 <63402314+egc112@users.noreply.github.com>
+---
+ .../luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua    | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua b/applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua
+index 03ce38e9d24..0dca521a0c1 100644
+--- a/applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua
++++ b/applications/luci-app-openvpn/luasrc/model/cbi/openvpn-advanced.lua
+@@ -798,6 +798,10 @@ local knownParams = {
+ 			"ncp_ciphers",
+ 			"AES-256-GCM:AES-128-GCM",
+ 			translate("Restrict the allowed ciphers to be negotiated") },
++		{ Value,
++			"data_ciphers",
++			"CHACHA20-POLY1305:AES-256-GCM:AES-128-GCM:AES-256-CBC",  
++			translate("Restrict the allowed ciphers to be negotiated") },
+ 	} }
+ }
+ 

@@ -1,0 +1,92 @@
+From 9bd8d683d9c7bff94d0218153d10d7d9773d0850 Mon Sep 17 00:00:00 2001
+From: John Audia <therealgraysky@proton.me>
+Date: Thu, 7 Sep 2023 06:55:41 -0400
+Subject: [PATCH] kernel: bump 5.15 to 5.15.131
+
+Changelog: https://cdn.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.15.131
+
+All patches automatically rebased.
+
+Build system: x86_64
+Build-tested: ramips/tplink_archer-a6-v3
+Run-tested: ramips/tplink_archer-a6-v3
+
+Signed-off-by: John Audia <therealgraysky@proton.me>
+---
+ include/kernel-5.15                                           | 4 ++--
+ target/linux/generic/hack-5.15/204-module_strip.patch         | 4 ++--
+ .../hack-5.15/780-usb-net-MeigLink_modem_support.patch        | 2 +-
+ ...Revert-Revert-Revert-driver-core-Set-fw_devlink-on-b.patch | 2 +-
+ .../830-mmc-MIPS-ralink-add-sdhci-for-mt7620a-SoC.patch       | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/include/kernel-5.15 b/include/kernel-5.15
+index 74130b2830935..0423befe74f95 100644
+--- a/include/kernel-5.15
++++ b/include/kernel-5.15
+@@ -1,2 +1,2 @@
+-LINUX_VERSION-5.15 = .130
+-LINUX_KERNEL_HASH-5.15.130 = ab464e4107329ff5262f1c585c40fc29dc68f17687a9a918f3e90faba5303d62
++LINUX_VERSION-5.15 = .131
++LINUX_KERNEL_HASH-5.15.131 = 997c3391f439fb6fe32f1938fe089a046b840a5cde9a2215b6745144f8b24c69
+diff --git a/target/linux/generic/hack-5.15/204-module_strip.patch b/target/linux/generic/hack-5.15/204-module_strip.patch
+index 31bfe07c78ccd..e650c1b18471a 100644
+--- a/target/linux/generic/hack-5.15/204-module_strip.patch
++++ b/target/linux/generic/hack-5.15/204-module_strip.patch
+@@ -120,7 +120,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+  
+  #ifdef CONFIG_MODVERSIONS
+  
+-@@ -3266,9 +3268,11 @@ static int setup_load_info(struct load_i
++@@ -3274,9 +3276,11 @@ static int setup_load_info(struct load_i
+  
+  static int check_modinfo(struct module *mod, struct load_info *info, int flags)
+  {
+@@ -133,7 +133,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+  	if (flags & MODULE_INIT_IGNORE_VERMAGIC)
+  		modmagic = NULL;
+  
+-@@ -3289,6 +3293,7 @@ static int check_modinfo(struct module *
++@@ -3297,6 +3301,7 @@ static int check_modinfo(struct module *
+  				mod->name);
+  		add_taint_module(mod, TAINT_OOT_MODULE, LOCKDEP_STILL_OK);
+  	}
+diff --git a/target/linux/generic/hack-5.15/780-usb-net-MeigLink_modem_support.patch b/target/linux/generic/hack-5.15/780-usb-net-MeigLink_modem_support.patch
+index 4f1966db16505..5c1dbd69d3cdc 100644
+--- a/target/linux/generic/hack-5.15/780-usb-net-MeigLink_modem_support.patch
++++ b/target/linux/generic/hack-5.15/780-usb-net-MeigLink_modem_support.patch
+@@ -29,7 +29,7 @@ Subject: [PATCH] net/usb/qmi_wwan: add MeigLink modem support
+  
+  #define QUECTEL_VENDOR_ID			0x2c7c
+  /* These Quectel products use Quectel's vendor ID */
+-@@ -1179,6 +1181,11 @@ static const struct usb_device_id option
++@@ -1180,6 +1182,11 @@ static const struct usb_device_id option
+  	  .driver_info = ZLP },
+  	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
+  	  .driver_info = RSVD(4) },
+diff --git a/target/linux/generic/hack-5.15/930-Revert-Revert-Revert-driver-core-Set-fw_devlink-on-b.patch b/target/linux/generic/hack-5.15/930-Revert-Revert-Revert-driver-core-Set-fw_devlink-on-b.patch
+index 5dd0554edbcee..4f4d6c75091af 100644
+--- a/target/linux/generic/hack-5.15/930-Revert-Revert-Revert-driver-core-Set-fw_devlink-on-b.patch
++++ b/target/linux/generic/hack-5.15/930-Revert-Revert-Revert-driver-core-Set-fw_devlink-on-b.patch
+@@ -19,7 +19,7 @@ Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+ 
+ --- a/drivers/base/core.c
+ +++ b/drivers/base/core.c
+-@@ -1561,7 +1561,7 @@ static void device_links_purge(struct de
++@@ -1562,7 +1562,7 @@ static void device_links_purge(struct de
+  #define FW_DEVLINK_FLAGS_RPM		(FW_DEVLINK_FLAGS_ON | \
+  					 DL_FLAG_PM_RUNTIME)
+  
+diff --git a/target/linux/ramips/patches-5.15/830-mmc-MIPS-ralink-add-sdhci-for-mt7620a-SoC.patch b/target/linux/ramips/patches-5.15/830-mmc-MIPS-ralink-add-sdhci-for-mt7620a-SoC.patch
+index 21538859a5571..2896002ed1aae 100644
+--- a/target/linux/ramips/patches-5.15/830-mmc-MIPS-ralink-add-sdhci-for-mt7620a-SoC.patch
++++ b/target/linux/ramips/patches-5.15/830-mmc-MIPS-ralink-add-sdhci-for-mt7620a-SoC.patch
+@@ -25,7 +25,7 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
+ 
+ --- a/drivers/mmc/host/Kconfig
+ +++ b/drivers/mmc/host/Kconfig
+-@@ -1092,3 +1092,5 @@ config MMC_OWL
++@@ -1093,3 +1093,5 @@ config MMC_OWL
+  
+  config MMC_SDHCI_EXTERNAL_DMA
+  	bool

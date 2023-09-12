@@ -1,0 +1,119 @@
+diff --git a/package/network/utils/comgt/files/3g.sh b/package/network/utils/comgt/files/3g.sh
+index 42ba894e59..69351bc577 100644
+--- a/package/network/utils/comgt/files/3g.sh
++++ b/package/network/utils/comgt/files/3g.sh
+@@ -53,25 +53,25 @@
+ 				case "$service" in
+ 					umts_only) CODE=2;;
+ 					gprs_only) CODE=1;;
+-					*) CODE=0;;
++					umts) CODE=0;;
+ 				esac
+-				export MODE="AT\$NWRAT=${CODE},2"
++				[ -n "$CODE" ] && export MODE="AT\$NWRAT=${CODE},2"
+ 			elif echo "$cardinfo" | grep -q Option; then
+ 				case "$service" in
+ 					umts_only) CODE=1;;
+ 					gprs_only) CODE=0;;
+-					*) CODE=3;;
++					umts) CODE=3;;
+ 				esac
+-				export MODE="AT_OPSYS=${CODE}"
++				[ -n "$CODE" ] && export MODE="AT_OPSYS=${CODE}"
+ 			elif echo "$cardinfo" | grep -q "Sierra Wireless"; then
+ 				SIERRA=1
+ 			elif echo "$cardinfo" | grep -qi huawei; then
+ 				case "$service" in
+ 					umts_only) CODE="14,2";;
+ 					gprs_only) CODE="13,1";;
+-					*) CODE="2,2";;
++					umts) CODE="2,2";;
+ 				esac
+-				export MODE="AT^SYSCFG=${CODE},3FFFFFFF,2,4"
++				[ -n "$CODE" ] && export MODE="AT^SYSCFG=${CODE},3FFFFFFF,2,4"
+ 			elif echo "$cardinfo" | grep -q "MikroTik"; then
+ 				COMMAND="AT+CFUN=1" gcom -d "$device" -s /etc/gcom/runcommand.gcom || return 1
+ 			fi
+diff --git a/package/network/utils/uqmi/files/lib/netifd/proto/qmi.sh b/package/network/utils/uqmi/files/lib/netifd/proto/qmi.sh
+index 6c5104bccd..c9934e8804 100755
+--- a/package/network/utils/uqmi/files/lib/netifd/proto/qmi.sh
++++ b/package/network/utils/uqmi/files/lib/netifd/proto/qmi.sh
+@@ -83,7 +83,7 @@
+ 
+ 	echo "Waiting for SIM initialization"
+ 	local uninitialized_timeout=0
+-	while uqmi -s -d "$device" --get-pin-status | grep '"UIM uninitialized"' > /dev/null; do
++	while uqmi -t 3000 -s -d "$device" --get-pin-status | grep '"UIM uninitialized"' > /dev/null; do
+ 		[ -e "$device" ] || return 1
+ 		if [ "$uninitialized_timeout" -lt "$timeout" -o "$timeout" = "0" ]; then
+ 			let uninitialized_timeout++
+@@ -96,8 +96,8 @@
+ 		fi
+ 	done
+ 
+-	if uqmi -s -d "$device" --uim-get-sim-state | grep -q '"Not supported"\|"Invalid QMI command"' &&
+-	   uqmi -s -d "$device" --get-pin-status | grep -q '"Not supported"\|"Invalid QMI command"' ; then
++	if uqmi -t 3000 -s -d "$device" --uim-get-sim-state | grep -q '"Not supported"\|"Invalid QMI command"' &&
++	   uqmi -t 3000 -s -d "$device" --get-pin-status | grep -q '"Not supported"\|"Invalid QMI command"' ; then
+ 		[ -n "$pincode" ] && {
+ 			uqmi -s -d "$device" --verify-pin1 "$pincode" > /dev/null || uqmi -s -d "$device" --uim-verify-pin1 "$pincode" > /dev/null || {
+ 				echo "Unable to verify PIN"
+@@ -107,10 +107,10 @@
+ 			}
+ 		}
+ 	else
+-		json_load "$(uqmi -s -d "$device" --get-pin-status)"
++		json_load "$(uqmi -t 3000 -s -d "$device" --get-pin-status)"
+ 		json_get_var pin1_status pin1_status
+ 		if [ -z "$pin1_status" ]; then
+-			json_load "$(uqmi -s -d "$device" --uim-get-sim-state)"
++			json_load "$(uqmi -t 3000 -s -d "$device" --uim-get-sim-state)"
+ 			json_get_var pin1_status pin1_status
+ 		fi
+ 		json_get_var pin1_verify_tries pin1_verify_tries
+diff --git a/package/utils/busybox/Config-defaults.in b/package/utils/busybox/Config-defaults.in
+index b3c3f9a0b2..8590e400af 100644
+--- a/package/utils/busybox/Config-defaults.in
++++ b/package/utils/busybox/Config-defaults.in
+@@ -252,13 +252,13 @@
+ 	default 256
+ config BUSYBOX_DEFAULT_FEATURE_EDITING_SAVEHISTORY
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_EDITING_SAVE_ON_EXIT
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_REVERSE_SEARCH
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_TAB_COMPLETION
+ 	bool
+ 	default y
+@@ -2300,7 +2300,7 @@
+ 	default n
+ config BUSYBOX_DEFAULT_FTPPUT
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_FTPGETPUT_LONG_OPTIONS
+ 	bool
+ 	default n
+diff --git a/target/linux/mvebu/cortexa9/base-files/etc/uci-defaults/03_wireless b/target/linux/mvebu/cortexa9/base-files/etc/uci-defaults/03_wireless
+index f9526e3d86..6c7bba44cc 100644
+--- a/target/linux/mvebu/cortexa9/base-files/etc/uci-defaults/03_wireless
++++ b/target/linux/mvebu/cortexa9/base-files/etc/uci-defaults/03_wireless
+@@ -48,9 +48,9 @@
+ 		;;
+ 	esac
+ 
+-	uci get wireless.radio0.country || uci set wireless.radio0.country=$REGD
++	uci set wireless.radio0.country=$REGD
+ 	uci get wireless.@wifi-iface[0].macaddr || uci set wireless.@wifi-iface[0].macaddr=$WIFIMAC0
+-	uci get wireless.radio1.country || uci set wireless.radio1.country=$REGD
++	uci set wireless.radio1.country=$REGD
+ 	uci get wireless.@wifi-iface[1].macaddr || uci set wireless.@wifi-iface[1].macaddr=$WIFIMAC1
+ 	;;
+ esac

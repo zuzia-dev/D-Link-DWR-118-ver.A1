@@ -1,0 +1,35 @@
+From 15adb189bc73e128d1c888bb10a5cae09cb71989 Mon Sep 17 00:00:00 2001
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 30 May 2021 16:47:01 +0200
+Subject: [PATCH] luci-mod-network: hint that the network-upgrade might
+ triggered multiple times
+
+Based on the 2-step migration of the bridge- and interface-configuration add a
+hint that the "Network configuration migration" might get triggered multiple
+times. This will not confuse the user with some thought of endless loop.
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+---
+ .../htdocs/luci-static/resources/view/network/interfaces.js     | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js b/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js
+index 54c7b6cb3d1..0e836e7cf26 100644
+--- a/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js
++++ b/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js
+@@ -345,6 +345,7 @@ return view.extend({
+ 		ui.showModal(_('Network bridge configuration migration'), [
+ 			E('p', _('The existing network configuration needs to be changed for LuCI to function properly.')),
+ 			E('p', _('Upon pressing "Continue", bridges configuration will be updated and the network will be restarted to apply the updated configuration.')),
++			E('p', _('Depending on your current configuration this update will be triggered multiple times.')),
+ 			E('div', { 'class': 'right' },
+ 				E('button', {
+ 					'class': 'btn cbi-button-action important',
+@@ -379,6 +380,7 @@ return view.extend({
+ 		ui.showModal(_('Network ifname configuration migration'), [
+ 			E('p', _('The existing network configuration needs to be changed for LuCI to function properly.')),
+ 			E('p', _('Upon pressing "Continue", ifname options will get renamed and the network will be restarted to apply the updated configuration.')),
++			E('p', _('Depending on your current configuration this update will be triggered multiple times.')),
+ 			E('div', { 'class': 'right' },
+ 				E('button', {
+ 					'class': 'btn cbi-button-action important',
