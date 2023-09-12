@@ -1,0 +1,39 @@
+
+config system
+	option hostname 'OpenWrt'
+	option timezone 'CET-1CEST,M3.5.0,M10.5.0/3'
+	option ttylogin '0'
+	option log_size '512'
+	option urandom_seed '0'
+	option compat_version '1.0'
+	option zonename 'Europe/Warsaw'
+
+config timeserver 'ntp'
+	option enabled '1'
+	option enable_server '0'
+	list server '216.239.35.0'    # Google
+	list server '216.239.35.4'    # Google
+	list server '216.239.35.8'    # Google
+	list server '216.239.35.12'   # Google
+	list server '162.159.200.123' # Cloudflare
+	list server '162.159.200.1'   # Cloudflare
+
+config led 'led_lan'
+	option name 'lan'
+	option sysfs 'green:lan'
+	option trigger 'switch0'
+	option port_mask '0x1f'
+
+config led 'led_wan'
+	option name 'wan'
+	option sysfs 'green:wan'
+	option trigger 'switch0'
+	option port_mask '0x20'
+
+config led 'led_wifi_led'
+	option name 'wifi'
+	option sysfs 'green:wlan2g'
+	option trigger 'netdev'
+	option mode 'link tx rx'
+	option dev 'wlan1'
+

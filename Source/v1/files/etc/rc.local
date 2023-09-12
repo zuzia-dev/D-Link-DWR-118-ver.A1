@@ -1,0 +1,15 @@
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+
+#/etc/init.d/adblock restart &
+
+echo 1 > /proc/sys/net/netfilter/nf_conntrack_helper
+echo 0 > /proc/sys/net/ipv4/tcp_timestamps
+for i in /proc/sys/net/ipv4/conf/*/bootp_relay; do echo 0 > $i; done
+echo 2000 > /sys/module/block/parameters/events_dfl_poll_msecs
+echo 1 > /proc/sys/kernel/keys/maxkeys
+echo "bbr" > /proc/sys/net/ipv4/tcp_congestion_control
+#cat /proc/sys/net/ipv4/tcp_congestion_control
+sysctl -p >/dev/null 2>&1
+
+exit 0
